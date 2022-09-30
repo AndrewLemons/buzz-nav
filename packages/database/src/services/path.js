@@ -29,7 +29,6 @@ export default class PathService {
 	}
 
 	getPathById(pathId) {
-		console.log(pathId);
 		let result = this.#db
 			.prepare(
 				sql`
@@ -39,7 +38,10 @@ export default class PathService {
 							node.xPosition,
 							node.yPosition,
 							layer.id AS layer_id,
-							layer.algorithm AS layer_algorithm
+							layer.name AS layer_name,
+							layer.xPosition AS layer_xPosition,
+							layer.yPosition AS layer_yPosition,
+							layer.zOffset AS layer_zOffset
 						FROM node
 						JOIN layer ON node.layerId = layer.id
 					)
@@ -53,14 +55,20 @@ export default class PathService {
 						_aNode.yPosition AS path_aNode_yPosition,
 						/* A node layer fields */
 						_aNode.layer_id AS path_aNode_layer_id,
-						_aNode.layer_algorithm AS path_aNode_layer_algorithm,
+						_aNode.layer_name AS path_aNode_layer_name,
+						_aNode.layer_xPosition AS path_aNode_layer_xPosition,
+						_aNode.layer_yPosition AS path_aNode_layer_yPosition,
+						_aNode.layer_zOffset AS path_aNode_layer_zOffset,
 						/* B node fields */
 						_bNode.id AS path_bNode_id,
 						_bNode.xPosition AS path_bNode_xPosition,
 						_bNode.yPosition AS path_bNode_yPosition,
-						/* A node layer fields */
+						/* B node layer fields */
 						_bNode.layer_id AS path_bNode_layer_id,
-						_bNode.layer_algorithm AS path_bNode_layer_algorithm
+						_bNode.layer_name AS path_bNode_layer_name,
+						_bNode.layer_xPosition AS path_bNode_layer_xPosition,
+						_bNode.layer_yPosition AS path_bNode_layer_yPosition,
+						_bNode.layer_zOffset AS path_bNode_layer_zOffset
 					FROM path
 					JOIN _pathNode _aNode ON path.aNodeId = _aNode.id AND path.id = ?
 					JOIN _pathNode _bNode ON path.bNodeId = _bNode.id AND path.id = ?
@@ -72,16 +80,39 @@ export default class PathService {
 			result.path_aNode_id,
 			result.path_aNode_xPosition,
 			result.path_aNode_yPosition,
-			new Layer(result.path_aNode_layer_id, result.path_aNode_layer_algorithm)
+			new Layer(
+				result.path_aNode_layer_id,
+				result.path_aNode_layer_name,
+				result.path_aNode_layer_xPosition,
+				result.path_aNode_layer_yPosition,
+				result.path_aNode_layer_zOffset
+			)
 		);
 		let bNode = new Node(
 			result.path_bNode_id,
 			result.path_bNode_xPosition,
 			result.path_bNode_yPosition,
-			new Layer(result.path_bNode_layer_id, result.bNode_layer_algorithm)
+			new Layer(
+				result.path_bNode_layer_id,
+				result.path_bNode_layer_name,
+				result.path_bNode_layer_xPosition,
+				result.path_bNode_layer_yPosition,
+				result.path_bNode_layer_zOffset
+			)
 		);
 
 		return new Path(result.id, result.length, aNode, bNode);
+	}
+
+	/**
+	 * @param {Node} node
+	 * @returns {Path[]}
+	 */
+	getNodePaths(node) {
+		return this.#db
+			.prepare(sql`SELECT id FROM path WHERE aNodeId = ? OR bNodeId = ?`)
+			.all(node.getId(), node.getId())
+			.map((row) => this.getPathById(row.id));
 	}
 
 	/**
@@ -89,7 +120,7 @@ export default class PathService {
 	 * @param {Node} bNode
 	 * @param {number} length
 	 */
-	createPath(aNode, bNode, length) {
+	createPath(aNode, bNode, length = null) {
 		let result = this.#db
 			.prepare(
 				sql`

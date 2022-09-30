@@ -31,7 +31,11 @@ export default class NodeService {
 			.prepare(
 				sql`
 					SELECT 
-						node.*, layer.id AS layer_id, layer.name AS layer_name, layer.algorithm AS layer_algorithm
+						node.*, layer.id AS layer_id,
+						layer.name AS layer_name,
+						layer.xPosition AS layer_xPosition,
+						layer.yPosition AS layer_yPosition,
+						layer.zOffset AS layer_zOffset
 					FROM node JOIN layer ON layer.id = node.layerId AND node.id = ?
 				`
 			)
@@ -41,7 +45,13 @@ export default class NodeService {
 			result.id,
 			result.xPosition,
 			result.yPosition,
-			new Layer(result.layer_id, result.layer_name, result.layer_algorithm)
+			new Layer(
+				result.layer_id,
+				result.layer_name,
+				result.layer_xPosition,
+				result.layer_yPosition,
+				result.layer_zOffset
+			)
 		);
 	}
 

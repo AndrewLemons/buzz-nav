@@ -1,8 +1,8 @@
 export default class ComplexMath {
 	/**
-	 * @param {number} x1 
-	 * @param {number} y1 
-	 * @param {number} x2 
+	 * @param {number} x1
+	 * @param {number} y1
+	 * @param {number} x2
 	 * @param {number} y2
 	 */
 	static pythagoreanDistance(x1, y1, x2, y2) {
@@ -10,12 +10,12 @@ export default class ComplexMath {
 	}
 
 	/**
-	 * @param {number} lat1 
-	 * @param {number} lon1 
-	 * @param {number} lat2 
+	 * @param {number} lon1
+	 * @param {number} lat1
 	 * @param {number} lon2
+	 * @param {number} lat2
 	 */
-	static haversineDistance(lat1, lon1, lat2, lon2) {
+	static haversineDistance(lon1, lat1, lon2, lat2) {
 		let dLat = this.degToRad(lat2 - lat1);
 		let dLon = this.degToRad(lon2 - lon1);
 		lat1 = this.degToRad(lat1);

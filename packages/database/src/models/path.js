@@ -30,27 +30,58 @@ export default class Path {
 		}
 
 		if (this.#aNode.getLayer().getId() === this.#bNode.getLayer().getId()) {
-			if (this.#aNode.getLayer().getAlgorithm() === "HAVERSINE") {
+			if (this.#aNode.getLayer().getId() === 1) {
 				return ComplexMath.haversineDistance(
 					this.#aNode.getXPosition(),
 					this.#aNode.getYPosition(),
 					this.#bNode.getXPosition(),
 					this.#bNode.getYPosition()
 				);
-			} else {
-				return ComplexMath.pythagoreanDistance(
-					this.#aNode.getXPosition(),
-					this.#aNode.getYPosition(),
-					this.#bNode.getXPosition(),
-					this.#bNode.getYPosition()
-				);
 			}
-		} else {
-			console.warn(
-				"Can not calculate path distance between two different layers"
+
+			return ComplexMath.pythagoreanDistance(
+				this.#aNode.getXPosition(),
+				this.#aNode.getYPosition(),
+				this.#bNode.getXPosition(),
+				this.#bNode.getYPosition()
 			);
-			return 0;
 		}
+
+		if (this.#aNode.getLayer().getId() === 1) {
+			let offset = this.#bNode
+				.getLayer()
+				.getOffsetFrom(this.#aNode.getYPosition(), this.#aNode.getXPosition());
+			offset.x += this.#bNode.getXPosition();
+			offset.y += this.#bNode.getYPosition();
+			let distance = ComplexMath.pythagoreanDistance(offset.x, offset.y, 0, 0);
+			return ComplexMath.pythagoreanDistance(distance, offset.z * 4, 0, 0);
+		}
+
+		if (this.#bNode.getLayer().getId() === 1) {
+			let offset = this.#aNode
+				.getLayer()
+				.getOffsetFrom(this.#bNode.getYPosition(), this.#bNode.getXPosition());
+			offset.x += this.#aNode.getXPosition();
+			offset.y += this.#aNode.getYPosition();
+			let distance = ComplexMath.pythagoreanDistance(offset.x, offset.y, 0, 0);
+			return ComplexMath.pythagoreanDistance(distance, offset.z * 4);
+		}
+
+		let offset = this.#aNode
+			.getLayer()
+			.getOffsetFrom(
+				this.#bNode.getLayer().getYPosition(),
+				this.#bNode.getLayer().getXPosition()
+			);
+		offset.x += this.#aNode.getXPosition() - this.#bNode.getXPosition();
+		offset.y += this.#aNode.getYPosition() - this.#bNode.getYPosition();
+		let distance = ComplexMath.pythagoreanDistance(offset.x, offset.y, 0, 0);
+		return ComplexMath.pythagoreanDistance(
+			distance,
+			this.#aNode.getLayer().getZOffset() * 4,
+			0,
+			this.#bNode.getLayer().getZOffset() * 4
+		);
 	}
 
 	getNodeA() {
@@ -59,6 +90,16 @@ export default class Path {
 
 	getNodeB() {
 		return this.#bNode;
+	}
+
+	getOtherNode(node) {
+		if (node.getId() === this.#aNode.getId()) {
+			return this.#bNode;
+		} else if (node.getId() === this.#bNode.getId()) {
+			return this.#aNode;
+		} else {
+			throw new Error("Node is not part of this path");
+		}
 	}
 
 	toString() {

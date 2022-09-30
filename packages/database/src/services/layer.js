@@ -16,14 +16,16 @@ export default class LayerService {
 					CREATE TABLE IF NOT EXISTS layer (
 						id INTEGER PRIMARY KEY AUTOINCREMENT,
 						name TEXT NOT NULL,
-						algorithm INTEGER NOT NULL
+						xPosition REAL NOT NULL,
+						yPosition REAL NOT NULL,
+						zOffset INTEGER NOT NULL DEFAULT 0
 					)
 				`
 			)
 			.run();
 		this.#db
 			.prepare(
-				sql`REPLACE INTO layer (id, name, algorithm) VALUES (1, 'Default', 1)`
+				sql`REPLACE INTO layer (id, name, xPosition, yPosition) VALUES (1, 'Default', 0, 0)`
 			)
 			.run();
 	}
@@ -32,7 +34,10 @@ export default class LayerService {
 		return this.#db
 			.prepare(sql`SELECT * FROM layer`)
 			.all()
-			.map((row) => new Layer(row.id, row.name, row.algorithm));
+			.map(
+				(row) =>
+					new Layer(row.id, row.name, row.xPosition, row.yPosition, row.zOffset)
+			);
 	}
 
 	/**
@@ -43,13 +48,28 @@ export default class LayerService {
 			.prepare(sql`SELECT * FROM layer WHERE id = ?`)
 			.get(layerId);
 
-		return new Layer(result.id, result.name, result.algorithm);
+		return new Layer(
+			result.id,
+			result.name,
+			result.xPosition,
+			result.yPosition,
+			result.zOffset
+		);
 	}
 
-	createLayer(name, algorithm) {
+	/**
+	 * @param {string} name
+	 * @param {number} xPosition - Longitude
+	 * @param {number} yPosition - Latitude
+	 * @param {number} zOffset
+	 * @returns {Layer}
+	 */
+	createLayer(name, xPosition, yPosition, zOffset) {
 		let result = this.#db
-			.prepare(sql`INSERT INTO layer (name, algorithm) VALUES (?, ?)`)
-			.run(name, Math.max(Layer.ALGORITHMS.indexOf(algorithm), 0));
+			.prepare(
+				sql`INSERT INTO layer (name, xPosition, yPosition, zOffset) VALUES (?, ?, ?, ?)`
+			)
+			.run(name, xPosition, yPosition, zOffset);
 
 		return this.getLayerById(result.lastInsertRowid);
 	}

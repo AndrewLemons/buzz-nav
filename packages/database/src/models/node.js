@@ -1,3 +1,4 @@
+import { ComplexMath } from "@buzz-nav/utilities";
 import Layer from "./layer.js";
 
 export default class Node {
@@ -33,6 +34,24 @@ export default class Node {
 
 	getLayer() {
 		return this.#layer;
+	}
+
+	getLayerTranslation() {
+		if (this.#layer.getId() === 1) {
+			return 0;
+		}
+		let layerDistance = ComplexMath.pythagoreanDistance(
+			this.#xPosition,
+			this.#yPosition,
+			0,
+			0
+		);
+		return ComplexMath.pythagoreanDistance(
+			layerDistance,
+			this.#layer.getZPosition(),
+			0,
+			0
+		);
 	}
 
 	toString() {
