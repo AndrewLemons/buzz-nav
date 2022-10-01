@@ -29,59 +29,7 @@ export default class Path {
 			return this.#length;
 		}
 
-		if (this.#aNode.getLayer().getId() === this.#bNode.getLayer().getId()) {
-			if (this.#aNode.getLayer().getId() === 1) {
-				return ComplexMath.haversineDistance(
-					this.#aNode.getXPosition(),
-					this.#aNode.getYPosition(),
-					this.#bNode.getXPosition(),
-					this.#bNode.getYPosition()
-				);
-			}
-
-			return ComplexMath.pythagoreanDistance(
-				this.#aNode.getXPosition(),
-				this.#aNode.getYPosition(),
-				this.#bNode.getXPosition(),
-				this.#bNode.getYPosition()
-			);
-		}
-
-		if (this.#aNode.getLayer().getId() === 1) {
-			let offset = this.#bNode
-				.getLayer()
-				.getOffsetFrom(this.#aNode.getYPosition(), this.#aNode.getXPosition());
-			offset.x += this.#bNode.getXPosition();
-			offset.y += this.#bNode.getYPosition();
-			let distance = ComplexMath.pythagoreanDistance(offset.x, offset.y, 0, 0);
-			return ComplexMath.pythagoreanDistance(distance, offset.z * 4, 0, 0);
-		}
-
-		if (this.#bNode.getLayer().getId() === 1) {
-			let offset = this.#aNode
-				.getLayer()
-				.getOffsetFrom(this.#bNode.getYPosition(), this.#bNode.getXPosition());
-			offset.x += this.#aNode.getXPosition();
-			offset.y += this.#aNode.getYPosition();
-			let distance = ComplexMath.pythagoreanDistance(offset.x, offset.y, 0, 0);
-			return ComplexMath.pythagoreanDistance(distance, offset.z * 4);
-		}
-
-		let offset = this.#aNode
-			.getLayer()
-			.getOffsetFrom(
-				this.#bNode.getLayer().getYPosition(),
-				this.#bNode.getLayer().getXPosition()
-			);
-		offset.x += this.#aNode.getXPosition() - this.#bNode.getXPosition();
-		offset.y += this.#aNode.getYPosition() - this.#bNode.getYPosition();
-		let distance = ComplexMath.pythagoreanDistance(offset.x, offset.y, 0, 0);
-		return ComplexMath.pythagoreanDistance(
-			distance,
-			this.#aNode.getLayer().getZOffset() * 4,
-			0,
-			this.#bNode.getLayer().getZOffset() * 4
-		);
+		return this.#aNode.getDistanceTo(this.#bNode);
 	}
 
 	getNodeA() {

@@ -36,21 +36,72 @@ export default class Node {
 		return this.#layer;
 	}
 
-	getLayerTranslation() {
-		if (this.#layer.getId() === 1) {
-			return 0;
+	/**
+	 * @param {Node} otherNode
+	 * @returns {number}
+	 */
+	getDistanceTo(otherNode) {
+		if (this.getLayer().getId() === otherNode.getLayer().getId()) {
+			if (this.getLayer().getId() === 1) {
+				return ComplexMath.haversineDistance(
+					this.getXPosition(),
+					this.getYPosition(),
+					otherNode.getXPosition(),
+					otherNode.getYPosition()
+				);
+			}
+
+			return ComplexMath.pythagoreanDistance(
+				this.getXPosition(),
+				this.getYPosition(),
+				otherNode.getXPosition(),
+				otherNode.getYPosition()
+			);
 		}
-		let layerDistance = ComplexMath.pythagoreanDistance(
-			this.#xPosition,
-			this.#yPosition,
-			0,
-			0
+
+		if (this.getLayer().getId() === 1) {
+			let offset = otherNode
+				.getLayer()
+				.getOffsetFrom(this.getYPosition(), this.getXPosition());
+			offset.x += otherNode.getXPosition();
+			offset.y += otherNode.getYPosition();
+			let distance = ComplexMath.pythagoreanDistance(offset.x, offset.y, 0, 0);
+			return ComplexMath.pythagoreanDistance(
+				distance,
+				otherNode.getLayer().getZOffset() * 4,
+				0,
+				0
+			);
+		}
+
+		if (otherNode.getLayer().getId() === 1) {
+			let offset = this.getLayer().getOffsetFrom(
+				otherNode.getYPosition(),
+				otherNode.getXPosition()
+			);
+			offset.x += this.getXPosition();
+			offset.y += this.getYPosition();
+			let distance = ComplexMath.pythagoreanDistance(offset.x, offset.y, 0, 0);
+			return ComplexMath.pythagoreanDistance(
+				distance,
+				this.getLayer().getZOffset() * 4,
+				0,
+				0
+			);
+		}
+
+		let offset = this.getLayer().getOffsetFrom(
+			otherNode.getLayer().getYPosition(),
+			otherNode.getLayer().getXPosition()
 		);
+		offset.x += this.getXPosition() - otherNode.getXPosition();
+		offset.y += this.getYPosition() - otherNode.getYPosition();
+		let distance = ComplexMath.pythagoreanDistance(offset.x, offset.y, 0, 0);
 		return ComplexMath.pythagoreanDistance(
-			layerDistance,
-			this.#layer.getZPosition(),
+			distance,
+			this.getLayer().getZOffset() * 4,
 			0,
-			0
+			otherNode.getLayer().getZOffset() * 4
 		);
 	}
 

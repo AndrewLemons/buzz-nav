@@ -1,4 +1,5 @@
 import { sql } from "@buzz-nav/utilities";
+
 import Path from "../models/path.js";
 import Node from "../models/node.js";
 import Layer from "../models/layer.js";
@@ -118,16 +119,39 @@ export default class PathService {
 	/**
 	 * @param {Node} aNode
 	 * @param {Node} bNode
+	 * @returns {Path}
+	 */
+	getPathBetween(aNode, bNode) {
+		let result = this.#db
+			.prepare(
+				sql`SELECT id FROM path WHERE (aNodeId = ? AND bNodeId = ?) OR (aNodeId = ? AND bNodeId = ?)`
+			)
+			.get(aNode.getId(), bNode.getId(), bNode.getId(), aNode.getId());
+		console.log(aNode.getId(), bNode.getId(), result?.id);
+		return this.getPathById(result.id);
+	}
+
+	/**
+	 * @param {Node} aNode
+	 * @param {Node} bNode
 	 * @param {number} length
 	 */
 	createPath(aNode, bNode, length = null) {
+		if (aNode.getId() === bNode.getId()) {
+			throw new Error("Cannot create path between the same node");
+		}
+
 		let result = this.#db
 			.prepare(
 				sql`
 					INSERT INTO path (aNodeId, bNodeId, length) VALUES (?, ?, ?)
 				`
 			)
-			.run(aNode.getId(), bNode.getId(), length);
+			.run(
+				aNode.getId() < bNode.getId() ? aNode.getId() : bNode.getId(),
+				aNode.getId() > bNode.getId() ? aNode.getId() : bNode.getId(),
+				length
+			);
 
 		return this.getPathById(result.lastInsertRowid);
 	}
