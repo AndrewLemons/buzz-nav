@@ -127,7 +127,6 @@ export default class PathService {
 				sql`SELECT id FROM path WHERE (aNodeId = ? AND bNodeId = ?) OR (aNodeId = ? AND bNodeId = ?)`
 			)
 			.get(aNode.getId(), bNode.getId(), bNode.getId(), aNode.getId());
-		console.log(aNode.getId(), bNode.getId(), result?.id);
 		return this.getPathById(result.id);
 	}
 
