@@ -1,0 +1,25 @@
+{
+	"name": "@buzz-nav/editor",
+	"version": "0.0.0",
+	"type": "module",
+	"scripts": {
+		"build": "webpack build",
+		"build:dev": "webpack build -w"
+	},
+	"dependencies": {
+		"leaflet": "^1.9.1",
+		"vue": "^3.2.40"
+	},
+	"devDependencies": {
+		"autoprefixer": "^10.4.12",
+		"css-loader": "^6.7.1",
+		"html-webpack-plugin": "^5.5.0",
+		"postcss": "^8.4.17",
+		"postcss-loader": "^7.0.1",
+		"style-loader": "^3.3.1",
+		"tailwindcss": "^3.1.8",
+		"vue-loader": "^17.0.0",
+		"webpack": "^5.74.0",
+		"webpack-cli": "^4.10.0"
+	}
+}
