@@ -1,0 +1,9 @@
+{
+	"material-icon-theme.folders.associations": {
+		"editor-client": "client",
+		"editor-server": "server",
+		"entries": "app"
+	},
+	"editor.formatOnSave": true,
+	"editor.defaultFormatter": "esbenp.prettier-vscode"
+}
