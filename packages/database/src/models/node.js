@@ -110,4 +110,13 @@ export default class Node {
 			this.#yPosition
 		}) ∈ ${JSON.stringify(this.#layer.getName())}`;
 	}
+
+	toJSON() {
+		return {
+			id: this.#id,
+			xPosition: this.#xPosition,
+			yPosition: this.#yPosition,
+			layer: this.#layer.toJSON(),
+		};
+	}
 }

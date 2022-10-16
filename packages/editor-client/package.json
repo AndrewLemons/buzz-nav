@@ -1,18 +1,24 @@
 {
-	"name": "@buzz-nav/editor",
+	"name": "@buzz-nav/editor-client",
 	"version": "0.0.0",
 	"type": "module",
+	"main": "./index.js",
 	"scripts": {
 		"build": "webpack build",
 		"build:dev": "webpack build -w"
 	},
 	"dependencies": {
+		"@fortawesome/fontawesome-svg-core": "^6.2.0",
+		"@fortawesome/free-solid-svg-icons": "^6.2.0",
+		"@fortawesome/vue-fontawesome": "^3.0.1",
+		"axios": "^1.1.2",
 		"leaflet": "^1.9.1",
 		"vue": "^3.2.40"
 	},
 	"devDependencies": {
 		"autoprefixer": "^10.4.12",
 		"css-loader": "^6.7.1",
+		"html-loader": "^4.2.0",
 		"html-webpack-plugin": "^5.5.0",
 		"postcss": "^8.4.17",
 		"postcss-loader": "^7.0.1",

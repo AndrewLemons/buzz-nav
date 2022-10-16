@@ -1,4 +1,3 @@
-import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
 import NodeIconImage from "../assets/node-marker-icon.png";
@@ -26,5 +25,3 @@ export const Icons = {
 		iconAnchor: [8, 8],
 	}),
 };
-
-export default L;

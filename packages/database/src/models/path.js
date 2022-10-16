@@ -55,4 +55,13 @@ export default class Path {
 			this.#id
 		}, ${this.#aNode.getId()} -> ${this.#bNode.getId()}`;
 	}
+
+	toJSON() {
+		return {
+			id: this.#id,
+			length: this.getLength(),
+			aNode: this.#aNode.toJSON(),
+			bNode: this.#bNode.toJSON(),
+		};
+	}
 }

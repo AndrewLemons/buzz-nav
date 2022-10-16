@@ -72,4 +72,46 @@ export default class NodeService {
 
 		return this.getNodeById(result.lastInsertRowid);
 	}
+
+	getNodesInBounds(layerId, latA, lonA, latB, lonB) {
+		let lowLat = Math.min(latA, latB);
+		let highLat = Math.max(latA, latB);
+		let lowLon = Math.min(lonA, lonB);
+		let highLon = Math.max(lonA, lonB);
+
+		return this.#db
+			.prepare(
+				sql`
+					SELECT
+						node.*,
+						layer.id AS layer_id,
+						layer.name AS layer_name,
+						layer.xPosition AS layer_xPosition,
+						layer.yPosition AS layer_yPosition,
+						layer.zOffset AS layer_zOffset
+					FROM node
+					JOIN layer ON 
+						layer.id = node.layerId AND (
+							node.layerId = ? AND
+							node.xPosition BETWEEN ? AND ? AND
+							node.yPosition BETWEEN ? AND ?
+						)
+				`
+			)
+			.all(layerId, lowLon, highLon, lowLat, highLat)
+			.map((node) => {
+				return new Node(
+					node.id,
+					node.xPosition,
+					node.yPosition,
+					new Layer(
+						node.layer_id,
+						node.layer_name,
+						node.layer_xPosition,
+						node.layer_yPosition,
+						node.layer_zOffset
+					)
+				);
+			});
+	}
 }

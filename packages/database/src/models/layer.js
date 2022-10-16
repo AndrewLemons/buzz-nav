@@ -54,4 +54,14 @@ export default class Layer {
 	getZOffset() {
 		return this.#zOffset;
 	}
+
+	toJSON() {
+		return {
+			id: this.#id,
+			name: this.#name,
+			xPosition: this.#xPosition,
+			yPosition: this.#yPosition,
+			zOffset: this.#zOffset,
+		};
+	}
 }

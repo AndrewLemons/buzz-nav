@@ -154,4 +154,95 @@ export default class PathService {
 
 		return this.getPathById(result.lastInsertRowid);
 	}
+
+	getPathsInBounds(latA, lonA, latB, lonB) {
+		return this.#db
+			.prepare(
+				sql`
+					WITH _pathNode AS (
+						SELECT 
+							node.id,
+							node.xPosition,
+							node.yPosition,
+							layer.id AS layer_id,
+							layer.name AS layer_name,
+							layer.xPosition AS layer_xPosition,
+							layer.yPosition AS layer_yPosition,
+							layer.zOffset AS layer_zOffset
+						FROM node
+						JOIN layer ON node.layerId = layer.id
+					)
+
+					SELECT
+						path.id,
+						path.length,
+						/* A node fields */
+						_aNode.id AS path_aNode_id,
+						_aNode.xPosition AS path_aNode_xPosition,
+						_aNode.yPosition AS path_aNode_yPosition,
+						/* A node layer fields */
+						_aNode.layer_id AS path_aNode_layer_id,
+						_aNode.layer_name AS path_aNode_layer_name,
+						_aNode.layer_xPosition AS path_aNode_layer_xPosition,
+						_aNode.layer_yPosition AS path_aNode_layer_yPosition,
+						_aNode.layer_zOffset AS path_aNode_layer_zOffset,
+						/* B node fields */
+						_bNode.id AS path_bNode_id,
+						_bNode.xPosition AS path_bNode_xPosition,
+						_bNode.yPosition AS path_bNode_yPosition,
+						/* B node layer fields */
+						_bNode.layer_id AS path_bNode_layer_id,
+						_bNode.layer_name AS path_bNode_layer_name,
+						_bNode.layer_xPosition AS path_bNode_layer_xPosition,
+						_bNode.layer_yPosition AS path_bNode_layer_yPosition,
+						_bNode.layer_zOffset AS path_bNode_layer_zOffset
+					FROM path
+					WHERE
+						(
+							_aNode.xPosition BETWEEN ? AND ?
+							AND
+							_aNode.yPosition BETWEEN ? AND ?
+						)
+						OR
+						(
+							_bNode.xPosition BETWEEN ? AND ?
+							AND
+							_bNode.yPosition BETWEEN ? AND ?
+						)
+					JOIN _pathNode _aNode ON path.aNodeId = _aNode.id
+					JOIN _pathNode _bNode ON path.bNodeId = _bNode.id
+				`
+			)
+			.all(latA, lonA, latB, lonB, latA, lonA, latB, lonB)
+			.map((path) => {
+				return new Path(
+					path.id,
+					path.length,
+					new Node(
+						path_aNode_id,
+						path_aNode_xPosition,
+						path_aNode_yPosition,
+						new Layer(
+							path_aNode_layer_id,
+							path_aNode_layer_name,
+							path_aNode_layer_xPosition,
+							path_aNode_layer_yPosition,
+							path_aNode_layer_zOffset
+						)
+					),
+					new Node(
+						path_bNode_id,
+						path_bNode_xPosition,
+						path_bNode_yPosition,
+						new Layer(
+							path_bNode_layer_id,
+							path_bNode_layer_name,
+							path_bNode_layer_xPosition,
+							path_bNode_layer_yPosition,
+							path_bNode_layer_zOffset
+						)
+					)
+				);
+			});
+	}
 }
