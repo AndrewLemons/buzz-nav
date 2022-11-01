@@ -1,5 +1,4 @@
 const path = require("node:path");
-const ejs = require("ejs");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { VueLoaderPlugin } = require("vue-loader");
 
