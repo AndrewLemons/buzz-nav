@@ -6,18 +6,21 @@ export default class Node {
 	#xPosition;
 	#yPosition;
 	#layer;
+	#info;
 
 	/**
 	 * @param {number} id
 	 * @param {number} xPosition
 	 * @param {number} yPosition
 	 * @param {Layer} layer
+	 * @param {string} info
 	 */
-	constructor(id, xPosition, yPosition, layer) {
+	constructor(id, xPosition, yPosition, layer, info) {
 		this.#id = id;
 		this.#xPosition = xPosition;
 		this.#yPosition = yPosition;
 		this.#layer = layer;
+		this.#info = info;
 	}
 
 	getId() {
@@ -34,6 +37,10 @@ export default class Node {
 
 	getLayer() {
 		return this.#layer;
+	}
+
+	getInfo() {
+		return this.#info;
 	}
 
 	/**
@@ -117,6 +124,7 @@ export default class Node {
 			xPosition: this.#xPosition,
 			yPosition: this.#yPosition,
 			layer: this.#layer.toJSON(),
+			info: this.#info,
 		};
 	}
 }

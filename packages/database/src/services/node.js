@@ -19,6 +19,7 @@ export default class NodeService {
 						xPosition REAL NOT NULL,
 						yPosition REAL NOT NULL,
 						layerId INTEGER NOT NULL,
+						info TEXT,
 						FOREIGN KEY (layerId) REFERENCES layer (id)
 					)
 				`
@@ -53,6 +54,42 @@ export default class NodeService {
 				result.layer_zOffset
 			)
 		);
+	}
+
+	getNodesByInfoSearch(search) {
+		let results = this.#db
+			.prepare(
+				sql`
+					SELECT
+						node.*,
+						layer.id AS layer_id,
+						layer.name AS layer_name,
+						layer.xPosition AS layer_xPosition,
+						layer.yPosition AS layer_yPosition,
+						layer.zOffset AS layer_zOffset
+					FROM node
+					JOIN layer ON
+						layer.id = node.layerId AND
+						node.info LIKE ?
+				`
+			)
+			.all(`%${search}%`)
+			.map((node) => {
+				return new Node(
+					node.id,
+					node.xPosition,
+					node.yPosition,
+					new Layer(
+						node.layer_id,
+						node.layer_name,
+						node.layer_xPosition,
+						node.layer_yPosition,
+						node.layer_zOffset
+					)
+				);
+			});
+
+		return results;
 	}
 
 	/**
