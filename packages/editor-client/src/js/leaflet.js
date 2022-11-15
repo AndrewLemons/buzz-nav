@@ -1,5 +1,4 @@
 import L from "leaflet";
-
 import NodeIconImage from "../assets/node-marker-icon.png";
 
 export const Layers = {
