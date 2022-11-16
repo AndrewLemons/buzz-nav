@@ -10,6 +10,13 @@ export async function createNode({ xPosition, yPosition, layerId }) {
 	return data.node;
 }
 
+export async function removeNode(nodeId) {
+	let { data } = await Axios.delete(`/api/nodes/${nodeId}`);
+	if (data.success === false) {
+		throw new Error("Failed to remove node");
+	}
+}
+
 export async function getNodesByBoundingBox({
 	layerId,
 	latA,
@@ -29,5 +36,3 @@ export async function getNodesByBoundingBox({
 
 	return data.nodes;
 }
-
-export async function removeNode({}) {}

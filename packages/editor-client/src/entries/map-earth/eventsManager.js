@@ -8,10 +8,8 @@ export default class EventsManager {
 	constructor() {
 		this.#selectedTool = sessionStorage.getItem("selectedTool") ?? "select";
 
-		window.addEventListener("storage", (e) => {
-			if (e.key === "selectedTool") {
-				this.#selectedTool = e.newValue;
-			}
+		window.addEventListener("storage", (event) => {
+			this.onStorageUpdate(event);
 		});
 	}
 
@@ -33,13 +31,14 @@ export default class EventsManager {
 		}
 	}
 
-	onNodeClick(map, node) {
+	async onNodeClick(node) {
 		this.#ensureSetup();
 
 		if (this.#selectedTool === "select") {
 			console.log("Selected", node);
 		} else if (this.#selectedTool === "delete") {
-			Api.removeNode(node.id);
+			await Api.removeNode(node.id);
+			this.#mapManager.removeNode(node);
 		}
 	}
 
@@ -58,8 +57,6 @@ export default class EventsManager {
 	}
 
 	onStorageUpdate(event) {
-		this.#ensureSetup();
-
 		if (event.storageArea === window.sessionStorage) {
 			if (event.key === "selectedTool") {
 				this.#selectedTool = event.newValue;
