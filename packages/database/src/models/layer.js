@@ -8,11 +8,12 @@ export default class Layer {
 	#zOffset;
 
 	/**
-	 * @param {number} id
-	 * @param {string} name
-	 * @param {number} xPosition
-	 * @param {number} yPosition
-	 * @param {number} zOffset
+	 * Create a new layer.
+	 * @param {number} id the id of the layer
+	 * @param {string} name the name of the layer
+	 * @param {number} xPosition the X position of the layer
+	 * @param {number} yPosition the Y position of the layer
+	 * @param {number} zOffset the Z offset of the layer
 	 */
 	constructor(id, name, xPosition, yPosition, zOffset) {
 		this.#id = id;
@@ -22,22 +23,44 @@ export default class Layer {
 		this.#zOffset = zOffset;
 	}
 
+	/**
+	 * Get the id of the layer.
+	 * @returns {number} the id of the layer
+	 */
 	getId() {
 		return this.#id;
 	}
 
+	/**
+	 * Get the name of the layer.
+	 * @returns {string} the name of the layer
+	 */
 	getName() {
 		return this.#name;
 	}
 
+	/**
+	 * Get the X position of the layer.
+	 * @returns {number} the X position of the layer
+	 */
 	getXPosition() {
 		return this.#xPosition;
 	}
 
+	/**
+	 * Get the Y position of the layer.
+	 * @returns {number} the Y position of the layer
+	 */
 	getYPosition() {
 		return this.#yPosition;
 	}
 
+	/**
+	 * Get the offset of the layer from a given position.
+	 * @param {number} lat the latitude of the position
+	 * @param {number} lon the longitude of the position
+	 * @returns {number} the offset of the layer from the position
+	 */
 	getOffsetFrom(lat, lon) {
 		let yOffset = ComplexMath.haversineDistance(this.#yPosition, lon, lat, lon);
 		let xOffset = ComplexMath.haversineDistance(lat, this.#xPosition, lat, lon);
@@ -51,10 +74,18 @@ export default class Layer {
 		};
 	}
 
+	/**
+	 * Get the Z offset of the layer.
+	 * @returns {number} the Z offset of the layer
+	 */
 	getZOffset() {
 		return this.#zOffset;
 	}
 
+	/**
+	 * Get the object representation of the layer.
+	 * @returns {object} the object representation of the layer
+	 */
 	toJSON() {
 		return {
 			id: this.#id,

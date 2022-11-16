@@ -11,6 +11,7 @@ export default class Database {
 	path;
 
 	/**
+	 * Create a new database.
 	 * @param {string} databasePath
 	 */
 	constructor(databasePath) {

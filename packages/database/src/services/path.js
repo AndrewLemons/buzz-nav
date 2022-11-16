@@ -7,11 +7,19 @@ import Layer from "../models/layer.js";
 export default class PathService {
 	#db;
 
+	/**
+	 * Create a new path service.
+	 * @param {*} database
+	 */
 	constructor(database) {
 		this.#db = database;
 		this.#initDatabase();
 	}
 
+	/**
+	 * Initialize the path portion of the database.
+	 * @private
+	 */
 	#initDatabase() {
 		this.#db
 			.prepare(
@@ -29,6 +37,11 @@ export default class PathService {
 			.run();
 	}
 
+	/**
+	 * Get a path by its ID.
+	 * @param {number} pathId the ID of the path to get
+	 * @returns {Path} the path
+	 */
 	getPathById(pathId) {
 		let result = this.#db
 			.prepare(
@@ -106,8 +119,9 @@ export default class PathService {
 	}
 
 	/**
-	 * @param {Node} node
-	 * @returns {Path[]}
+	 * Get all paths connected to a node.
+	 * @param {Node} node the node to get paths for
+	 * @returns {Path[]} the paths
 	 */
 	getNodePaths(node) {
 		return this.#db
@@ -117,9 +131,10 @@ export default class PathService {
 	}
 
 	/**
-	 * @param {Node} aNode
-	 * @param {Node} bNode
-	 * @returns {Path}
+	 * Get the path that connects two nodes.
+	 * @param {Node} aNode the first node
+	 * @param {Node} bNode the second node
+	 * @returns {Path} the path
 	 */
 	getPathBetween(aNode, bNode) {
 		let result = this.#db
@@ -131,9 +146,10 @@ export default class PathService {
 	}
 
 	/**
-	 * @param {Node} aNode
-	 * @param {Node} bNode
-	 * @param {number} length
+	 * Create a new path.
+	 * @param {Node} aNode the first node of the path
+	 * @param {Node} bNode the second node of the path
+	 * @param {number} length the length of the path
 	 */
 	createPath(aNode, bNode, length = null) {
 		if (aNode.getId() === bNode.getId()) {
@@ -155,6 +171,14 @@ export default class PathService {
 		return this.getPathById(result.lastInsertRowid);
 	}
 
+	/**
+	 * Get all paths within a given bounds.
+	 * @param {number} latA the minimum latitude of the bounds
+	 * @param {number} lonA the minimum longitude of the bounds
+	 * @param {number} latB the maximum latitude of the bounds
+	 * @param {number} lonB the maximum longitude of the bounds
+	 * @returns {Path[]} the paths
+	 */
 	getPathsInBounds(latA, lonA, latB, lonB) {
 		return this.#db
 			.prepare(

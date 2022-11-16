@@ -9,11 +9,12 @@ export default class Node {
 	#info;
 
 	/**
-	 * @param {number} id
-	 * @param {number} xPosition
-	 * @param {number} yPosition
-	 * @param {Layer} layer
-	 * @param {string} info
+	 * Create a new node.
+	 * @param {number} id the ID of the node
+	 * @param {number} xPosition the X position of the node
+	 * @param {number} yPosition the Y position of the node
+	 * @param {Layer} layer the layer of the node
+	 * @param {string} info the info for the node
 	 */
 	constructor(id, xPosition, yPosition, layer, info) {
 		this.#id = id;
@@ -23,29 +24,50 @@ export default class Node {
 		this.#info = info;
 	}
 
+	/**
+	 * Get the ID of the node.
+	 * @returns {number} the ID of the node
+	 */
 	getId() {
 		return this.#id;
 	}
 
+	/**
+	 * Get the X position of the node.
+	 * @returns {number} the X position of the node
+	 */
 	getXPosition() {
 		return this.#xPosition;
 	}
 
+	/**
+	 * Get the Y position of the node.
+	 * @returns {number} the Y position of the node
+	 */
 	getYPosition() {
 		return this.#yPosition;
 	}
 
+	/**
+	 * Get the layer of the node.
+	 * @returns {Layer} the layer of the node
+	 */
 	getLayer() {
 		return this.#layer;
 	}
 
+	/**
+	 * Get the information for the node.
+	 * @returns {string} the information for the node
+	 */
 	getInfo() {
 		return this.#info;
 	}
 
 	/**
-	 * @param {Node} otherNode
-	 * @returns {number}
+	 * Get the distance between two nodes.
+	 * @param {Node} otherNode the other node
+	 * @returns {number} the distance between the two nodes
 	 */
 	getDistanceTo(otherNode) {
 		if (this.getLayer().getId() === otherNode.getLayer().getId()) {
@@ -112,12 +134,20 @@ export default class Node {
 		);
 	}
 
+	/**
+	 * Get the string representation of the node.
+	 * @returns {string} the string representation of the node
+	 */
 	toString() {
 		return `Node #${this.#id} @ (${this.#xPosition}, ${
 			this.#yPosition
 		}) ∈ ${JSON.stringify(this.#layer.getName())}`;
 	}
 
+	/**
+	 * Get the object representation of the node.
+	 * @returns {object} the object representation of the node
+	 */
 	toJSON() {
 		return {
 			id: this.#id,

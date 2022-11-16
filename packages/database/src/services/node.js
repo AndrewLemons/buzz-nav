@@ -5,11 +5,19 @@ import Layer from "../models/layer.js";
 export default class NodeService {
 	#db;
 
+	/**
+	 * Create a new node service.
+	 * @param {*} database
+	 */
 	constructor(database) {
 		this.#db = database;
 		this.#initDatabase();
 	}
 
+	/**
+	 * Initialize the node portion of the database.
+	 * @private
+	 */
 	#initDatabase() {
 		this.#db
 			.prepare(
@@ -27,6 +35,11 @@ export default class NodeService {
 			.run();
 	}
 
+	/**
+	 * Get a node by its ID.
+	 * @param {number} nodeId the ID of the node to get
+	 * @returns {Node} the node
+	 */
 	getNodeById(nodeId) {
 		let result = this.#db
 			.prepare(
@@ -56,6 +69,11 @@ export default class NodeService {
 		);
 	}
 
+	/**
+	 * Search all nodes' info for a given query.
+	 * @param {string} search the query to search for
+	 * @returns {Node[]} the nodes that match the query
+	 */
 	getNodesByInfoSearch(search) {
 		let results = this.#db
 			.prepare(
@@ -93,10 +111,11 @@ export default class NodeService {
 	}
 
 	/**
-	 * @param {number} xPosition
-	 * @param {number} yPosition
-	 * @param {number} layerId
-	 * @returns
+	 * Create a new node.
+	 * @param {number} xPosition the X position of the node
+	 * @param {number} yPosition the Y position of the node
+	 * @param {number} layerId the ID of the layer the node is on
+	 * @returns {Node} the created node
 	 */
 	createNode(xPosition, yPosition, layerId) {
 		let result = this.#db
@@ -110,6 +129,10 @@ export default class NodeService {
 		return this.getNodeById(result.lastInsertRowid);
 	}
 
+	/**
+	 * Delete a node.
+	 * @param {number} nodeId the ID of the node to delete
+	 */
 	deleteNode(nodeId) {
 		this.#db
 			.prepare(
@@ -120,6 +143,15 @@ export default class NodeService {
 			.run(nodeId);
 	}
 
+	/**
+	 * Update a node.
+	 * @param {number} nodeId the ID of the node to update
+	 * @param {number} xPosition the new X position of the node
+	 * @param {number} yPosition the new Y position of the node
+	 * @param {number} layerId the new ID of the layer the node is on
+	 * @param {string} info the new info of the node
+	 * @returns {Node} the updated node
+	 */
 	updateNode(nodeId, { xPosition, yPosition, layerId, info }) {
 		let node = this.getNodeById(nodeId);
 
@@ -140,6 +172,15 @@ export default class NodeService {
 		return this.getNodeById(nodeId);
 	}
 
+	/**
+	 * Get all nodes within a bounds.
+	 * @param {number} layerId the ID of the layer to get nodes from
+	 * @param {number} latA the minimum latitude position of the bounds
+	 * @param {number} lonA the minimum longitude position of the bounds
+	 * @param {number} latB the maximum latitude position of the bounds
+	 * @param {number} lonB the maximum longitude position of the bounds
+	 * @returns {Node[]} the nodes within the bounds
+	 */
 	getNodesInBounds(layerId, latA, lonA, latB, lonB) {
 		let lowLat = Math.min(latA, latB);
 		let highLat = Math.max(latA, latB);

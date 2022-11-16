@@ -4,11 +4,19 @@ import Layer from "../models/layer.js";
 export default class LayerService {
 	#db;
 
+	/**
+	 * Create a new layer service.
+	 * @param {*} database
+	 */
 	constructor(database) {
 		this.#db = database;
 		this.#initDatabase();
 	}
 
+	/**
+	 * Initialize the layer portion of the database.
+	 * @private
+	 */
 	#initDatabase() {
 		this.#db
 			.prepare(
@@ -30,6 +38,10 @@ export default class LayerService {
 			.run();
 	}
 
+	/**
+	 * Get all layers.
+	 * @returns {Layer[]}
+	 */
 	getLayers() {
 		return this.#db
 			.prepare(sql`SELECT * FROM layer`)
@@ -41,7 +53,9 @@ export default class LayerService {
 	}
 
 	/**
-	 * @param {number} layerId
+	 * Get a layer by its ID.
+	 * @param {number} layerId the ID of the layer
+	 * @returns {Layer} the layer
 	 */
 	getLayerById(layerId) {
 		let result = this.#db
@@ -58,11 +72,12 @@ export default class LayerService {
 	}
 
 	/**
-	 * @param {string} name
-	 * @param {number} xPosition - Longitude
-	 * @param {number} yPosition - Latitude
-	 * @param {number} zOffset
-	 * @returns {Layer}
+	 * Create a new layer.
+	 * @param {string} name the name of the layer
+	 * @param {number} xPosition the X position of the layer
+	 * @param {number} yPosition the Y position of the layer
+	 * @param {number} zOffset the Z offset of the layer
+	 * @returns {Layer} the created layer
 	 */
 	createLayer(name, xPosition, yPosition, zOffset) {
 		let result = this.#db
