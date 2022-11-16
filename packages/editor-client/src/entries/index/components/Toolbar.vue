@@ -19,8 +19,8 @@
 		/>
 		<ToolbarItem
 			icon="trash"
-			:isSelected="selectedTool === 'trash'"
-			@click="setSelectedTool('trash')"
+			:isSelected="selectedTool === 'delete'"
+			@click="setSelectedTool('delete')"
 		/>
 	</div>
 </template>
