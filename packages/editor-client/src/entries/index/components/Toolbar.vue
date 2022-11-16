@@ -2,71 +2,55 @@
 	<div
 		class="flex flex-row items-center justify-center p-1 gap-1 bg-opacity-50 bg-black rounded-md"
 	>
-		<div
-			:class="[
-				'aspect-square p-2 rounded-md cursor-pointer ring-tech-gold hover:ring-1',
-				selectedTool === 'move' && 'bg-tech-gold',
-			]"
+		<ToolbarItem
+			icon="arrow-pointer"
+			:isSelected="selectedTool === 'select'"
+			@click="setSelectedTool('select')"
+		/>
+		<ToolbarItem
+			icon="arrows-up-down-left-right"
+			:isSelected="selectedTool === 'move'"
 			@click="setSelectedTool('move')"
-		>
-			<icon
-				icon="arrows-up-down-left-right"
-				:style="{ color: '#FFF' }"
-			/>
-		</div>
-		<div
-			:class="[
-				'aspect-square p-2 rounded-md cursor-pointer ring-tech-gold hover:ring-1',
-				selectedTool === 'add' && 'bg-tech-gold',
-			]"
+		/>
+		<ToolbarItem
+			icon="plus"
+			:isSelected="selectedTool === 'add'"
 			@click="setSelectedTool('add')"
-		>
-			<icon
-				icon="plus"
-				:style="{ color: '#FFF' }"
-			/>
-		</div>
-		<div
-			:class="[
-				'aspect-square p-2 rounded-md cursor-pointer ring-tech-gold hover:ring-1',
-				selectedTool === 'trash' && 'bg-tech-gold',
-			]"
+		/>
+		<ToolbarItem
+			icon="trash"
+			:isSelected="selectedTool === 'trash'"
 			@click="setSelectedTool('trash')"
-		>
-			<icon
-				icon="trash"
-				:style="{ color: '#FFF' }"
-			/>
-		</div>
+		/>
 	</div>
 </template>
 
 <script>
+import ToolbarItem from "./ToolbarItem.vue";
+
 export default {
 	name: "Toolbar",
+	components: {
+		ToolbarItem,
+	},
 	data: () => ({
 		selectedTool: "select",
 	}),
 	methods: {
 		setSelectedTool(tool) {
-			if (this.selectedTool === tool) {
-				sessionStorage.setItem("selectedTool", "select");
-				this.selectedTool = "select";
-			} else {
-				sessionStorage.setItem("selectedTool", tool);
-				this.selectedTool = tool;
-			}
+			sessionStorage.setItem("selectedTool", tool);
+			this.selectedTool = tool;
 		},
 	},
 	mounted() {
 		this.selectedTool = sessionStorage.getItem("selectedTool");
-
 		window.addEventListener("storage", (e) => {
 			if (e.key === "selectedTool") {
 				this.selectedTool = e.newValue;
 			}
 		});
 	},
+	components: { ToolbarItem },
 };
 </script>
 
