@@ -7,6 +7,12 @@ export default class EventsManager {
 
 	constructor() {
 		this.#selectedTool = sessionStorage.getItem("selectedTool") ?? "select";
+
+		window.addEventListener("storage", (e) => {
+			if (e.key === "selectedTool") {
+				this.#selectedTool = e.newValue;
+			}
+		});
 	}
 
 	setup(map, mapManager) {
