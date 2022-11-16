@@ -83,6 +83,47 @@ server.route({
 	},
 });
 
+server.route({
+	method: "GET",
+	path: "/api/nodes/:id",
+	schema: {
+		params: {
+			type: "object",
+			properties: {
+				id: { type: "integer", minimum: 1 },
+			},
+			required: ["id"],
+		},
+	},
+	handler: (req, reply) => {
+		let node = database.node.getNode(req.params.id);
+
+		return {
+			node,
+		};
+	},
+});
+
+server.route({
+	method: "DELETE",
+	path: "/api/nodes/:id",
+	schema: {
+		params: {
+			type: "object",
+			properties: {
+				id: { type: "integer", minimum: 1 },
+			},
+			required: ["id"],
+		},
+	},
+	handler: (req, reply) => {
+		database.node.deleteNode(req.params.id);
+		return {
+			success: true,
+		};
+	},
+});
+
 server.listen({
 	port: process.env.PORT ?? 8080,
 });

@@ -110,6 +110,16 @@ export default class NodeService {
 		return this.getNodeById(result.lastInsertRowid);
 	}
 
+	deleteNode(nodeId) {
+		this.#db
+			.prepare(
+				sql`
+					DELETE FROM node WHERE id = ?
+				`
+			)
+			.run(nodeId);
+	}
+
 	getNodesInBounds(layerId, latA, lonA, latB, lonB) {
 		let lowLat = Math.min(latA, latB);
 		let highLat = Math.max(latA, latB);
