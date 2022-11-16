@@ -269,4 +269,39 @@ export default class PathService {
 				);
 			});
 	}
+
+	/**
+	 * Update a path.
+	 * @param {number} pathId the ID of the path to update
+	 * @param {number} length the new length of the path
+	 * @returns {Path} the updated path
+	 */
+	updatePath(pathId, { length }) {
+		this.#db
+			.prepare(
+				sql`
+					UPDATE path
+					SET length = ?
+					WHERE id = ?
+				`
+			)
+			.run(length, pathId);
+
+		return this.getPathById(pathId);
+	}
+
+	/**
+	 * Delete a path.
+	 * @param {number} pathId the ID of the path to delete
+	 */
+	deletePath(pathId) {
+		this.#db
+			.prepare(
+				sql`
+					DELETE FROM path
+					WHERE id = ?
+				`
+			)
+			.run(pathId);
+	}
 }

@@ -49,9 +49,19 @@ server.route({
 				req.query.lonB
 			)
 			.map((node) => node.toJSON());
+		const paths = database.path
+			.getPathsInBounds(
+				1,
+				req.query.latA,
+				req.query.lonA,
+				req.query.latB,
+				req.query.lonB
+			)
+			.map((path) => path.toJSON());
 
 		return {
 			nodes,
+			paths,
 		};
 	},
 });
@@ -155,6 +165,111 @@ server.route({
 
 		return {
 			node,
+		};
+	},
+});
+
+server.route({
+	path: "/api/paths/:id",
+	method: "GET",
+	schema: {
+		params: {
+			type: "object",
+			properties: {
+				id: { type: "integer", minimum: 1 },
+			},
+			required: ["id"],
+		},
+	},
+	handler: (req, reply) => {
+		let path = database.path.getPath(req.params.id);
+
+		return {
+			path,
+		};
+	},
+});
+
+server.route({
+	path: "/api/paths",
+	method: "POST",
+	schema: {
+		body: {
+			type: "object",
+			properties: {
+				aNodeId: { type: "integer", minimum: 1 },
+				bNodeId: { type: "integer", minimum: 1 },
+				layerId: { type: "integer", minimum: 1 },
+				length: { type: "number" },
+			},
+			required: ["aNodeId", "bNodeId", "layerId"],
+		},
+	},
+	handler: (req, reply) => {
+		let path = database.path.createPath(
+			req.body.aNodeId,
+			req.body.bNodeId,
+			req.body.layerId,
+			req.body.length
+		);
+
+		return {
+			path,
+		};
+	},
+});
+
+server.route({
+	path: "/api/paths/:id",
+	method: "DELETE",
+	schema: {
+		params: {
+			type: "object",
+			properties: {
+				id: { type: "integer", minimum: 1 },
+			},
+			required: ["id"],
+		},
+	},
+	handler: (req, reply) => {
+		database.path.deletePath(req.params.id);
+		return {
+			success: true,
+		};
+	},
+});
+
+server.route({
+	path: "/api/paths/:id",
+	method: "PATCH",
+	schema: {
+		params: {
+			type: "object",
+			properties: {
+				id: { type: "integer", minimum: 1 },
+			},
+			required: ["id"],
+		},
+		body: {
+			type: "object",
+			properties: {
+				aNodeId: { type: "integer", minimum: 1 },
+				bNodeId: { type: "integer", minimum: 1 },
+				layerId: { type: "integer", minimum: 1 },
+				length: { type: "number" },
+			},
+		},
+	},
+	handler: (req, reply) => {
+		let path = database.path.updatePath(req.params.id, {
+			aNodeId: req.body.aNodeId,
+			bNodeId: req.body.bNodeId,
+			layerId: req.body.layerId,
+			length: req.body.length,
+		});
+
+		return {
+			path,
 		};
 	},
 });
