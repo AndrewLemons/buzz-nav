@@ -120,6 +120,26 @@ export default class NodeService {
 			.run(nodeId);
 	}
 
+	updateNode(nodeId, { xPosition, yPosition, layerId, info }) {
+		let node = this.getNodeById(nodeId);
+
+		this.#db
+			.prepare(
+				sql`
+					UPDATE node SET xPosition = ?, yPosition = ?, layerId = ?, info = ? WHERE id = ?
+				`
+			)
+			.run(
+				xPosition ?? node.getXPosition(),
+				yPosition ?? node.getYPosition(),
+				layerId ?? node.getLayer().getId(),
+				info ?? node.getInfo(),
+				nodeId
+			);
+
+		return this.getNodeById(nodeId);
+	}
+
 	getNodesInBounds(layerId, latA, lonA, latB, lonB) {
 		let lowLat = Math.min(latA, latB);
 		let highLat = Math.max(latA, latB);

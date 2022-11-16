@@ -17,6 +17,19 @@ export async function removeNode(nodeId) {
 	}
 }
 
+export async function updateNode(
+	nodeId,
+	{ xPosition, yPosition, layerId, info }
+) {
+	let { data } = await Axios.patch(`/api/nodes/${nodeId}`, {
+		xPosition,
+		yPosition,
+		layerId,
+		info,
+	});
+	return data.node;
+}
+
 export async function getNodesByBoundingBox({
 	layerId,
 	latA,

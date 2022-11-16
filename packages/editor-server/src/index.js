@@ -124,6 +124,41 @@ server.route({
 	},
 });
 
+server.route({
+	method: "PATCH",
+	path: "/api/nodes/:id",
+	schema: {
+		params: {
+			type: "object",
+			properties: {
+				id: { type: "integer", minimum: 1 },
+			},
+			required: ["id"],
+		},
+		body: {
+			type: "object",
+			properties: {
+				xPosition: { type: "number" },
+				yPosition: { type: "number" },
+				layerId: { type: "integer", minimum: 1 },
+				info: { type: "string" },
+			},
+		},
+	},
+	handler: (req, reply) => {
+		let node = database.node.updateNode(req.params.id, {
+			xPosition: req.body.xPosition,
+			yPosition: req.body.yPosition,
+			layerId: req.body.layerId,
+			info: req.body.info,
+		});
+
+		return {
+			node,
+		};
+	},
+});
+
 server.listen({
 	port: process.env.PORT ?? 8080,
 });

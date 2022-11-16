@@ -42,6 +42,17 @@ export default class EventsManager {
 		}
 	}
 
+	async onNodeDrag(node, latLng) {
+		this.#ensureSetup();
+
+		let newNode = await Api.updateNode(node.id, {
+			xPosition: latLng.lng,
+			yPosition: latLng.lat,
+		});
+
+		this.#mapManager.addNode(newNode);
+	}
+
 	async onMapClick(event) {
 		this.#ensureSetup();
 
@@ -60,6 +71,12 @@ export default class EventsManager {
 		if (event.storageArea === window.sessionStorage) {
 			if (event.key === "selectedTool") {
 				this.#selectedTool = event.newValue;
+
+				if (this.#selectedTool === "move") {
+					this.#mapManager.enableNodeDragging();
+				} else {
+					this.#mapManager.disableNodeDragging();
+				}
 			}
 		}
 	}

@@ -45,6 +45,9 @@ export default class MapManager {
 			marker.on("click", () => {
 				this.#eventsManager.onNodeClick(node);
 			});
+			marker.on("dragend", () => {
+				this.#eventsManager.onNodeDrag(node, marker.getLatLng());
+			});
 			this.#nodes.push({
 				id: node.id,
 				marker,
@@ -93,5 +96,21 @@ export default class MapManager {
 		});
 
 		newNodes.forEach((n) => this.addNode(n));
+	}
+
+	enableNodeDragging() {
+		this.#ensureSetup();
+
+		this.#nodes.forEach((node) => {
+			node.marker.dragging.enable();
+		});
+	}
+
+	disableNodeDragging() {
+		this.#ensureSetup();
+
+		this.#nodes.forEach((node) => {
+			node.marker.dragging.disable();
+		});
 	}
 }
