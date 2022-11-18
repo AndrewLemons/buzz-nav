@@ -48,16 +48,16 @@ server.route({
 			req.query.lonB
 		);
 
-		const paths = [];
+		const paths = {};
 		for (const node of nodes) {
 			database.path.getNodePaths(node).forEach((path) => {
-				paths.push(path);
+				paths[path.getId()] = path;
 			});
 		}
 
 		return {
 			nodes: nodes.map((n) => n.toJSON()),
-			paths: paths.map((n) => n.toJSON()),
+			paths: Object.values(paths).map((n) => n.toJSON()),
 		};
 	},
 });

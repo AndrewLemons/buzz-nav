@@ -30,7 +30,8 @@ export default class PathService {
 						aNodeId INTEGER NOT NULL,
 						bNodeId INTEGER NOT NULL,
 						FOREIGN KEY (aNodeId) REFERENCES node (id),
-						FOREIGN KEY (bNodeId) REFERENCES node (id)
+						FOREIGN KEY (bNodeId) REFERENCES node (id),
+						UNIQUE (aNodeId, bNodeId)
 					)
 				`
 			)
