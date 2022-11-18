@@ -6,7 +6,7 @@
 	"type": "module",
 	"scripts": {
 		"start": "node ./src/index.js",
-		"start:dev": "nodemon ./src/index.js"
+		"start:dev": "nodemon --watch ../database --watch ./ ./src/index.js"
 	},
 	"dependencies": {
 		"@fastify/static": "^6.5.0",
