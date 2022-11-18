@@ -13,21 +13,26 @@
 			</div>
 			<div class="flex flex-row basis-full justify-end"></div>
 		</div>
-		<iframe
-			id="map"
-			src="/map-earth.html"
-			class="w-full flex-grow"
-		></iframe>
+		<div class="flex flex-row h-full">
+			<iframe
+				id="map"
+				src="/map-earth.html"
+				class="w-full flex-grow"
+			></iframe>
+			<Sidebar />
+		</div>
 	</div>
 </template>
 
 <script>
 import Toolbar from "./components/Toolbar.vue";
+import Sidebar from "./components/Sidebar.vue";
 
 export default {
 	name: "App",
 	components: {
 		Toolbar,
+		Sidebar,
 	},
 };
 </script>

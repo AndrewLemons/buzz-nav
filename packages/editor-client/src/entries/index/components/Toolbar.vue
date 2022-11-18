@@ -36,6 +36,7 @@
 </template>
 
 <script>
+import { mapState, mapMutations } from "vuex";
 import ToolbarItem from "./ToolbarItem.vue";
 
 export default {
@@ -43,29 +44,11 @@ export default {
 	components: {
 		ToolbarItem,
 	},
-	data: () => ({
-		selectedTool: "select",
-	}),
+	computed: {
+		...mapState(["selectedTool"]),
+	},
 	methods: {
-		setSelectedTool(tool) {
-			sessionStorage.setItem("selectedTool", tool);
-			this.selectedTool = tool;
-		},
+		...mapMutations(["setSelectedTool"]),
 	},
-	mounted() {
-		this.selectedTool = sessionStorage.getItem("selectedTool");
-		window.addEventListener("storage", (e) => {
-			if (e.key === "selectedTool") {
-				this.selectedTool = e.newValue;
-			}
-		});
-	},
-	components: { ToolbarItem },
 };
 </script>
-
-<style>
-#icon {
-	stroke: white;
-}
-</style>

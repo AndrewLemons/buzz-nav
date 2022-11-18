@@ -102,7 +102,7 @@ server.route({
 		},
 	},
 	handler: (req, reply) => {
-		let node = database.node.getNode(req.params.id);
+		let node = database.node.getNodeById(req.params.id);
 
 		return {
 			node,
@@ -178,7 +178,7 @@ server.route({
 		},
 	},
 	handler: (req, reply) => {
-		let path = database.path.getPath(req.params.id);
+		let path = database.path.getPathById(req.params.id);
 
 		return {
 			path,

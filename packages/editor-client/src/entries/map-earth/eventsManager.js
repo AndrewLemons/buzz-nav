@@ -37,7 +37,13 @@ export default class EventsManager {
 		this.#ensureSetup();
 
 		if (this.#selectedTool === "select") {
-			console.log("Selected", node);
+			sessionStorage.setItem(
+				"selectedElement",
+				JSON.stringify({
+					type: "node",
+					id: node.id,
+				})
+			);
 		} else if (this.#selectedTool === "delete") {
 			await Api.removeNode(node.id);
 			this.#mapManager.removeNode(node);
@@ -73,7 +79,13 @@ export default class EventsManager {
 		this.#ensureSetup();
 
 		if (this.#selectedTool === "select") {
-			console.log("Selected", path);
+			sessionStorage.setItem(
+				"selectedElement",
+				JSON.stringify({
+					type: "path",
+					id: path.id,
+				})
+			);
 		} else if (this.#selectedTool === "delete") {
 			await Api.removePath(path.id);
 			this.#mapManager.removePath(path);

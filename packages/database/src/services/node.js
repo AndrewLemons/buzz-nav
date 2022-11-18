@@ -65,7 +65,8 @@ export default class NodeService {
 				result.layer_xPosition,
 				result.layer_yPosition,
 				result.layer_zOffset
-			)
+			),
+			result.info
 		);
 	}
 
@@ -103,7 +104,8 @@ export default class NodeService {
 						node.layer_xPosition,
 						node.layer_yPosition,
 						node.layer_zOffset
-					)
+					),
+					node.info
 				);
 			});
 
@@ -218,7 +220,8 @@ export default class NodeService {
 						node.layer_xPosition,
 						node.layer_yPosition,
 						node.layer_zOffset
-					)
+					),
+					node.info
 				);
 			});
 	}

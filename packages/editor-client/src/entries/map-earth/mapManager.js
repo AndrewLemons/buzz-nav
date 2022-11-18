@@ -173,7 +173,6 @@ export default class MapManager {
 		this.#ensureSetup();
 
 		this.#paths.forEach((path) => {
-			console.log(path);
 			if (path.aNodeId === node.id) {
 				path.polyline.setLatLngs([
 					[node.yPosition, node.xPosition],

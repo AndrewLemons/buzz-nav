@@ -69,3 +69,13 @@ export async function getMapByBoundingBox({ layerId, latA, lonA, latB, lonB }) {
 
 	return data;
 }
+
+export async function getNode(nodeId) {
+	let { data } = await Axios.get(`/api/nodes/${nodeId}`);
+	return data.node;
+}
+
+export async function getPath(pathId) {
+	let { data } = await Axios.get(`/api/paths/${pathId}`);
+	return data.path;
+}
