@@ -69,6 +69,17 @@ export default class EventsManager {
 		this.#mapManager.updateNodePaths(newNode);
 	}
 
+	async onPathClick(path) {
+		this.#ensureSetup();
+
+		if (this.#selectedTool === "select") {
+			console.log("Selected", path);
+		} else if (this.#selectedTool === "delete") {
+			await Api.removePath(path.id);
+			this.#mapManager.removePath(path);
+		}
+	}
+
 	async onMapClick(event) {
 		this.#ensureSetup();
 
