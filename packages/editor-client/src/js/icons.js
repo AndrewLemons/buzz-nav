@@ -6,8 +6,15 @@ import {
 	faPlus,
 	faTrash,
 	faArrowPointer,
+	faCircleNodes,
 } from "@fortawesome/free-solid-svg-icons";
 
-library.add(faArrowsUpDownLeftRight, faPlus, faTrash, faArrowPointer);
+library.add(
+	faArrowsUpDownLeftRight,
+	faPlus,
+	faTrash,
+	faArrowPointer,
+	faCircleNodes
+);
 
 export { library, FontAwesomeIcon as Icon };

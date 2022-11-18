@@ -5,9 +5,11 @@ export default class MapManager {
 	#map;
 	#eventsManager;
 	#nodes;
+	#paths;
 
 	constructor() {
 		this.#nodes = [];
+		this.#paths = [];
 	}
 
 	setup(map, eventsManager) {
@@ -15,10 +17,10 @@ export default class MapManager {
 		this.#eventsManager = eventsManager;
 
 		this.#map.on("moveend", () => {
-			this.updateNodes();
+			this.updateElements();
 		});
 
-		this.updateNodes();
+		this.updateElements();
 	}
 
 	#ensureSetup() {
@@ -55,6 +57,41 @@ export default class MapManager {
 		}
 	}
 
+	addPath(path) {
+		this.#ensureSetup();
+
+		let currentPath = this.#paths.find((p) => p.id === path.id);
+		if (currentPath) {
+			currentPath.polyline.setLatLngs([
+				[path.aNode.yPosition, path.aNode.xPosition],
+				[path.bNode.yPosition, path.bNode.xPosition],
+			]);
+		} else {
+			let polyline = L.polyline(
+				[
+					[path.aNode.yPosition, path.aNode.xPosition],
+					[path.bNode.yPosition, path.bNode.xPosition],
+				],
+				{
+					color: "red",
+				}
+			);
+
+			this.#paths.push({
+				id: path.id,
+				aNodeId: path.aNode.id,
+				bNodeId: path.bNode.id,
+				polyline,
+			});
+
+			polyline.addTo(this.#map);
+
+			polyline.on("click", () => {
+				this.#eventsManager.onPathClick(path);
+			});
+		}
+	}
+
 	removeNode(node) {
 		this.#ensureSetup();
 
@@ -62,6 +99,16 @@ export default class MapManager {
 		if (currentNode) {
 			this.#map.removeLayer(currentNode.marker);
 			this.#nodes = this.#nodes.filter((n) => n.id !== currentNode.id);
+		}
+	}
+
+	removePath(path) {
+		this.#ensureSetup();
+
+		let currentPath = this.#paths.find((p) => p.id === path.id);
+		if (currentPath) {
+			this.#map.removeLayer(currentPath.polyline);
+			this.#paths = this.#paths.filter((p) => p.id !== currentPath.id);
 		}
 	}
 
@@ -82,12 +129,32 @@ export default class MapManager {
 		});
 	}
 
-	async updateNodes() {
+	removeOutOfBoundsPaths() {
 		this.#ensureSetup();
-		this.removeOutOfBoundsNodes();
 
 		const bounds = this.#map.getBounds();
-		let newNodes = await Api.getNodesByBoundingBox({
+
+		this.#paths.forEach((path) => {
+			if (
+				path.polyline.getLatLngs()[0].lat < bounds.getSouth() ||
+				path.polyline.getLatLngs()[0].lat > bounds.getNorth() ||
+				path.polyline.getLatLngs()[0].lng < bounds.getWest() ||
+				path.polyline.getLatLngs()[0].lng > bounds.getEast() ||
+				path.polyline.getLatLngs()[1].lat < bounds.getSouth() ||
+				path.polyline.getLatLngs()[1].lat > bounds.getNorth() ||
+				path.polyline.getLatLngs()[1].lng < bounds.getWest() ||
+				path.polyline.getLatLngs()[1].lng > bounds.getEast()
+			) {
+				this.removePath(path);
+			}
+		});
+	}
+
+	async updateElements() {
+		this.#ensureSetup();
+
+		const bounds = this.#map.getBounds();
+		let newElements = await Api.getMapByBoundingBox({
 			layerId: 1,
 			latA: bounds.getNorth(),
 			lonA: bounds.getWest(),
@@ -95,7 +162,30 @@ export default class MapManager {
 			lonB: bounds.getEast(),
 		});
 
-		newNodes.forEach((n) => this.addNode(n));
+		this.removeOutOfBoundsNodes();
+		this.removeOutOfBoundsPaths();
+
+		newElements.nodes.forEach((n) => this.addNode(n));
+		newElements.paths.forEach((p) => this.addPath(p));
+	}
+
+	updateNodePaths(node) {
+		this.#ensureSetup();
+
+		this.#paths.forEach((path) => {
+			console.log(path);
+			if (path.aNodeId === node.id) {
+				path.polyline.setLatLngs([
+					[node.yPosition, node.xPosition],
+					path.polyline.getLatLngs()[1],
+				]);
+			} else if (path.bNodeId === node.id) {
+				path.polyline.setLatLngs([
+					path.polyline.getLatLngs()[0],
+					[node.yPosition, node.xPosition],
+				]);
+			}
+		});
 	}
 
 	enableNodeDragging() {

@@ -40,28 +40,24 @@ server.route({
 		},
 	},
 	handler: (req, reply) => {
-		const nodes = database.node
-			.getNodesInBounds(
-				1,
-				req.query.latA,
-				req.query.lonA,
-				req.query.latB,
-				req.query.lonB
-			)
-			.map((node) => node.toJSON());
-		const paths = database.path
-			.getPathsInBounds(
-				1,
-				req.query.latA,
-				req.query.lonA,
-				req.query.latB,
-				req.query.lonB
-			)
-			.map((path) => path.toJSON());
+		const nodes = database.node.getNodesInBounds(
+			1,
+			req.query.latA,
+			req.query.lonA,
+			req.query.latB,
+			req.query.lonB
+		);
+
+		const paths = [];
+		for (const node of nodes) {
+			database.path.getNodePaths(node).forEach((path) => {
+				paths.push(path);
+			});
+		}
 
 		return {
-			nodes,
-			paths,
+			nodes: nodes.map((n) => n.toJSON()),
+			paths: paths.map((n) => n.toJSON()),
 		};
 	},
 });
@@ -199,17 +195,15 @@ server.route({
 			properties: {
 				aNodeId: { type: "integer", minimum: 1 },
 				bNodeId: { type: "integer", minimum: 1 },
-				layerId: { type: "integer", minimum: 1 },
 				length: { type: "number" },
 			},
-			required: ["aNodeId", "bNodeId", "layerId"],
+			required: ["aNodeId", "bNodeId"],
 		},
 	},
 	handler: (req, reply) => {
 		let path = database.path.createPath(
 			req.body.aNodeId,
 			req.body.bNodeId,
-			req.body.layerId,
 			req.body.length
 		);
 
@@ -255,7 +249,6 @@ server.route({
 			properties: {
 				aNodeId: { type: "integer", minimum: 1 },
 				bNodeId: { type: "integer", minimum: 1 },
-				layerId: { type: "integer", minimum: 1 },
 				length: { type: "number" },
 			},
 		},
@@ -264,7 +257,6 @@ server.route({
 		let path = database.path.updatePath(req.params.id, {
 			aNodeId: req.body.aNodeId,
 			bNodeId: req.body.bNodeId,
-			layerId: req.body.layerId,
 			length: req.body.length,
 		});
 

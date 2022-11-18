@@ -10,10 +10,27 @@ export async function createNode({ xPosition, yPosition, layerId }) {
 	return data.node;
 }
 
+export async function createPath({ aNodeId, bNodeId, length }) {
+	let { data } = await Axios.post("/api/paths", {
+		aNodeId,
+		bNodeId,
+		length,
+	});
+
+	return data.path;
+}
+
 export async function removeNode(nodeId) {
 	let { data } = await Axios.delete(`/api/nodes/${nodeId}`);
 	if (data.success === false) {
 		throw new Error("Failed to remove node");
+	}
+}
+
+export async function removePath(pathId) {
+	let { data } = await Axios.delete(`/api/paths/${pathId}`);
+	if (data.success === false) {
+		throw new Error("Failed to remove path");
 	}
 }
 
@@ -30,13 +47,16 @@ export async function updateNode(
 	return data.node;
 }
 
-export async function getNodesByBoundingBox({
-	layerId,
-	latA,
-	lonA,
-	latB,
-	lonB,
-}) {
+export async function updatePath(pathId, { aNodeId, bNodeId, length }) {
+	let { data } = await Axios.patch(`/api/paths/${pathId}`, {
+		aNodeId,
+		bNodeId,
+		length,
+	});
+	return data.path;
+}
+
+export async function getMapByBoundingBox({ layerId, latA, lonA, latB, lonB }) {
 	let { data } = await Axios.get("/api/map", {
 		params: {
 			layerId,
@@ -47,5 +67,5 @@ export async function getNodesByBoundingBox({
 		},
 	});
 
-	return data.nodes;
+	return data;
 }

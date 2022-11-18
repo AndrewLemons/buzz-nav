@@ -6,21 +6,31 @@
 			icon="arrow-pointer"
 			:isSelected="selectedTool === 'select'"
 			@click="setSelectedTool('select')"
+			title="Select"
 		/>
 		<ToolbarItem
 			icon="arrows-up-down-left-right"
 			:isSelected="selectedTool === 'move'"
 			@click="setSelectedTool('move')"
+			title="Move nodes"
 		/>
 		<ToolbarItem
 			icon="plus"
-			:isSelected="selectedTool === 'add'"
-			@click="setSelectedTool('add')"
+			:isSelected="selectedTool === 'add-node'"
+			@click="setSelectedTool('add-node')"
+			title="Add node"
+		/>
+		<ToolbarItem
+			icon="circle-nodes"
+			:isSelected="selectedTool === 'add-path'"
+			@click="setSelectedTool('add-path')"
+			title="Add path"
 		/>
 		<ToolbarItem
 			icon="trash"
 			:isSelected="selectedTool === 'delete'"
 			@click="setSelectedTool('delete')"
+			title="Delete path/node"
 		/>
 	</div>
 </template>

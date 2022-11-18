@@ -4,9 +4,11 @@ export default class EventsManager {
 	#map;
 	#mapManager;
 	#selectedTool;
+	#selectedNode;
 
 	constructor() {
 		this.#selectedTool = sessionStorage.getItem("selectedTool") ?? "select";
+		this.#selectedNode = null;
 
 		window.addEventListener("storage", (event) => {
 			this.onStorageUpdate(event);
@@ -39,6 +41,19 @@ export default class EventsManager {
 		} else if (this.#selectedTool === "delete") {
 			await Api.removeNode(node.id);
 			this.#mapManager.removeNode(node);
+		} else if (this.#selectedTool === "add-path") {
+			if (this.#selectedNode) {
+				let path = await Api.createPath({
+					aNodeId: this.#selectedNode.id,
+					bNodeId: node.id,
+					length: 1,
+				});
+
+				this.#mapManager.addPath(path);
+				this.#selectedNode = null;
+			} else {
+				this.#selectedNode = node;
+			}
 		}
 	}
 
@@ -51,12 +66,13 @@ export default class EventsManager {
 		});
 
 		this.#mapManager.addNode(newNode);
+		this.#mapManager.updateNodePaths(newNode);
 	}
 
 	async onMapClick(event) {
 		this.#ensureSetup();
 
-		if (this.#selectedTool === "add") {
+		if (this.#selectedTool === "add-node") {
 			let node = await Api.createNode({
 				xPosition: event.latlng.lng,
 				yPosition: event.latlng.lat,
